@@ -6,6 +6,9 @@
 #include<errno.h>
 #include<string.h>
 #include<arpa/inet.h>
+	/* Make sure you include "arpa/inet.h" because if you will not use it then it will consider
+		the inet_ntoa() as int and gives error since printf() expect it to be a string.
+	*/
 main()
 {
 
@@ -20,16 +23,22 @@ main()
 	}
 
 	server.sin_family  = AF_INET;
+
+	//as some system uses Big Endian while some uses Big htons() is used to convert all into Network Order
 	server.sin_port = htons(10000);
 	server.sin_addr.s_addr = INADDR_ANY;
 	bzero(&server.sin_zero,8);
 	
 	len = sizeof(struct sockaddr_in);
+	
+	//Just to check that no error is there while binding
+
 	if((bind(sock,(struct sockaddr *)&server,len)) == -1){
 		perror("bind: ");
 		exit(-1);
 	}
 
+	//Error checking while calling listen()
 	if((listen(sock,5)) == -1)
 	{
 		perror("listen: ");
